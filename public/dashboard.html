@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ride Sharing Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        form input, form button {
+            width: 48%;
+            padding: 12px;
+            margin: 5px 1%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        form button {
+            width: 98%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        #map {
+            height: 350px;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #fare {
+            font-size: 16px;
+            font-weight: 500;
+            color: #28a745;
+        }
+
+        #rideList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #rideList li {
+            background: #f9f9f9;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        #rideList li button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        #rideList li button:hover {
+            background-color: #c82333;
+        }
+
+        @media(max-width:600px){
+            form input { width: 100%; margin:5px 0; }
+            form button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>🚗 Ride Sharing Dashboard</h2>
+</header>
+
+<div class="container">
+    <form id="rideForm">
+        <input type="text" id="pickup" placeholder="Pickup Location" required>
+        <input type="text" id="drop" placeholder="Drop Location" required><br>
+        <button type="submit">Book Ride</button>
+    </form>
+
+    <div id="map"></div>
+    <h3 id="fare"></h3>
+
+    <h3>Your Rides</h3>
+    <ul id="rideList"></ul>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="ride.js"></script>
+</body>
+</html>
