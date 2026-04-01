@@ -10,30 +10,30 @@ async function getRides() {
     list.innerHTML = "";
 
     rides.forEach(r => {
-        const li = document.createElement("li");
+        const card = document.createElement("div");
+        card.className = "ride-card";
 
-        const statusText = r.status === "accepted"
-            ? "Driver Assigned 🚗"
-            : "Waiting ⏳";
+        const statusClass = r.status === "accepted" ? "accepted" : "pending";
+        const statusText = r.status === "accepted" ? "Driver Assigned 🚗" : "Waiting ⏳";
 
-        li.innerHTML = `
-            <b>${r.pickup}</b> → <b>${r.drop}</b><br>
-            Fare: ₹${r.fare}<br>
-            Status: ${statusText}
+        card.innerHTML = `
+            <div class="route">${r.pickup} → ${r.drop}</div>
+            <div class="details">Fare: ₹${r.fare}</div>
+            <div class="status ${statusClass}">${statusText}</div>
         `;
 
         if (r.status === "pending") {
             const btn = document.createElement("button");
-            btn.textContent = "Accept 🚗";
+            btn.textContent = "Accept Ride";
 
             btn.onclick = async () => {
                 await fetch(`/ride/${r._id}`, { method: "PUT" });
             };
 
-            li.appendChild(btn);
+            card.appendChild(btn);
         }
 
-        list.appendChild(li);
+        list.appendChild(card);
     });
 }
 
