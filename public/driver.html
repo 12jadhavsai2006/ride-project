@@ -2,79 +2,93 @@
 <html>
 <head>
     <title>Driver Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f9;
             margin: 0;
-            padding: 0;
-            text-align: center;
         }
 
         header {
-            background-color: #343a40;
+            background: #111;
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            margin: 0;
-            font-weight: 500;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 1px;
         }
 
         .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        #rideList {
-            list-style: none;
-            padding: 0;
-        }
-
-        #rideList li {
-            background: #f9f9f9;
-            margin: 10px 0;
+        .ride-card {
+            background: white;
             padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .ride-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .route {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .details {
+            margin-top: 8px;
             font-size: 14px;
+            color: #555;
         }
 
-        #rideList li button {
-            background-color: #007bff;
-            color: white;
+        .status {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: orange;
+        }
+
+        .accepted {
+            color: green;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
             border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
+            border-radius: 6px;
+            background: #007bff;
+            color: white;
             cursor: pointer;
-            font-size: 12px;
+            transition: 0.3s;
         }
 
-        #rideList li button:hover {
-            background-color: #0069d9;
+        button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <h2>🚗 Driver Panel</h2>
-</header>
+<header>🚗 Driver Dashboard</header>
 
 <div class="container">
-    <ul id="rideList"></ul>
+    <div id="rideList"></div>
 </div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="driver.js"></script>
-<script src="driver.js"></script>
+
 </body>
 </html>
