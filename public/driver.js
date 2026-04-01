@@ -1,4 +1,7 @@
-// Fetch and display rides for driver
+// 🔥 Connect to socket
+const socket = io();
+
+// Fetch rides
 async function getRides() {
     const res = await fetch("/rides");
     const rides = await res.json();
@@ -8,14 +11,10 @@ async function getRides() {
 
     rides.forEach(r => {
         const li = document.createElement("li");
-        li.style.background = "white";
-        li.style.margin = "10px auto";
-        li.style.padding = "10px";
-        li.style.width = "350px";
-        li.style.borderRadius = "8px";
-        li.style.boxShadow = "0 0 5px gray";
 
-        const statusText = r.status === "accepted" ? "Driver Assigned 🚗" : "Waiting ⏳";
+        const statusText = r.status === "accepted"
+            ? "Driver Assigned 🚗"
+            : "Waiting ⏳";
 
         li.innerHTML = `
             <b>${r.pickup}</b> → <b>${r.drop}</b><br>
@@ -23,14 +22,12 @@ async function getRides() {
             Status: ${statusText}
         `;
 
-        // Only show Accept button if pending
         if (r.status === "pending") {
             const btn = document.createElement("button");
             btn.textContent = "Accept 🚗";
 
             btn.onclick = async () => {
                 await fetch(`/ride/${r._id}`, { method: "PUT" });
-                getRides();
             };
 
             li.appendChild(btn);
@@ -40,6 +37,16 @@ async function getRides() {
     });
 }
 
-// Auto-load and refresh rides every 5 seconds
+// Initial load
 window.onload = getRides;
-setInterval(getRides, 5000);
+
+// 🔥 REAL-TIME LISTENERS
+socket.on("newRide", () => {
+    console.log("New ride received ⚡");
+    getRides();
+});
+
+socket.on("rideUpdated", () => {
+    console.log("Ride updated ⚡");
+    getRides();
+});

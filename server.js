@@ -1,20 +1,27 @@
 // server.js
-require('dotenv').config(); // ✅ Add this line at the top
+require('dotenv').config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 
+// 🔥 NEW (Socket.IO setup)
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 // Serve frontend files
 app.use(express.json());
 app.use(express.static("public"));
 
-// ✅ Connect to MongoDB using .env
+// MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected ✅"))
     .catch(err => console.log(err));
 
-// ✅ User model
+// Models
 const User = mongoose.model("User", {
     name: String,
     email: String,
@@ -22,29 +29,31 @@ const User = mongoose.model("User", {
     role: String  
 });
 
-// ✅ Ride model
 const Ride = mongoose.model("Ride", {
     pickup: String,
     drop: String,
     fare: Number,
     status: {
         type: String,
-        default: "pending" // pending → accepted
+        default: "pending"
     }
 });
 
-// ✅ Get all rides
+// 🔥 Socket connection
+io.on("connection", (socket) => {
+    console.log("User connected ⚡");
+});
+
+// APIs
 app.get("/rides", async (req, res) => {
     const rides = await Ride.find();
     res.json(rides);
 });
 
-// ✅ Test route
 app.get("/", (req, res) => {
     res.send("Server is working 🚀");
 });
 
-// ✅ Register API
 app.post("/register", async (req, res) => {
     const { name, email, password, role } = req.body;
     const user = new User({ name, email, password, role });
@@ -52,7 +61,6 @@ app.post("/register", async (req, res) => {
     res.send("Registered Successfully");
 });
 
-// ✅ Login API
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
@@ -67,29 +75,42 @@ app.post("/login", async (req, res) => {
     });
 });
 
-// ✅ Ride booking API
+// 🔥 REAL-TIME RIDE CREATE
 app.post("/ride", async (req, res) => {
     const { pickup, drop, fare } = req.body;
     const ride = new Ride({ pickup, drop, fare });
     await ride.save();
+
     console.log("Ride Saved:", ride);
+
+    // 🔥 SEND TO ALL DRIVERS
+    io.emit("newRide", ride);
+
     res.send("Ride Booked 🚗");
 });
 
-// ✅ Delete Ride
+// Delete
 app.delete("/ride/:id", async (req, res) => {
     await Ride.findByIdAndDelete(req.params.id);
     res.send("Ride Deleted ❌");
 });
 
-// ✅ Accept Ride
+// 🔥 REAL-TIME ACCEPT
 app.put("/ride/:id", async (req, res) => {
-    await Ride.findByIdAndUpdate(req.params.id, { status: "accepted" });
+    const updatedRide = await Ride.findByIdAndUpdate(
+        req.params.id,
+        { status: "accepted" },
+        { new: true }
+    );
+
+    // 🔥 UPDATE ALL CLIENTS
+    io.emit("rideUpdated", updatedRide);
+
     res.send("Ride Accepted 🚗");
 });
 
-// ✅ Start server
-const PORT = process.env.PORT || 3000; // use PORT from .env for Render
-app.listen(PORT, () => {
+// Start server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
